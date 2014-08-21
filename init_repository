@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ $# -ne 1 ];
+then
+    echo "Must specify which directory to initialize!"
+    exit 2
+fi
+
+cd $1
+
+git init
+echo "*.html" >> .gitignore
+git add .gitignore
+git commit -m "Initialized the repository."
