@@ -1,0 +1,15 @@
+#!/bin/sh
+
+
+if [ $# -ne 1 ];
+then
+    echo "Must specify which file to convert!"
+    exit 2
+fi
+
+cd `dirname $1`
+file=`basename $1`
+
+output=`echo $file | cut -d'.' -f1`.html
+
+pandoc -s -S -t html $file > $output

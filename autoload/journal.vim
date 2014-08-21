@@ -9,4 +9,5 @@ endfunction
 
 function journal#SaveHook()
     call system( g:journal_install_dir . "/save " . expand("%:p"))
+    call system( g:journal_install_dir . "/generate_html " . expand("%:p"))
 endfunction
