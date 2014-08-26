@@ -23,6 +23,7 @@ git init
 
 # Make a .gitignore
 echo "*.html" >> .gitignore
+echo "*.xml" >> .gitignore
 git add .gitignore
 
 # Commit the initial commit
