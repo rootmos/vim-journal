@@ -1,14 +1,46 @@
-#!/bin/sh
+#!/bin/sh -x
 
+# Check syntax
 if [ $# -ne 1 ];
 then
     echo "Must specify which directory to initialize!"
     exit 2
 fi
 
+# Figure out where this and hence also the html conversion script
+# is installed
+script_path=`dirname $0`
+full_script_path=`readlink -m $script_path`
+html_converter="$full_script_path/generate_html"
+index_generator="$full_script_path/generate_index"
+stylesheet="$full_script_path/index.xsl"
+
+# Go to the repo we want to initialize
 cd $1
 
+# Initialize the repo
 git init
+
+# Make a .gitignore
 echo "*.html" >> .gitignore
 git add .gitignore
+
+# Commit the initial commit
 git commit -m "Initialized the repository."
+
+# Add the post-commit hook (if it is not there already)
+target=".git/hooks/post-commit"
+source="$full_script_path/journal-git-hook"
+
+if [ ! -e $target ]
+then
+    cp $source $target
+    sed -i -e "s@<PATH-TO-GENERATE_HTML>@$html_converter@" $target
+    sed -i -e "s@<PATH-TO-GENERATE_INDEX>@$index_generator@" $target
+    sed -i -e "s@<PATH-TO-STYLESHEET>@$stylesheet@" $target
+    chmod +x $target
+else
+    echo "The post-commit git hook already exists."
+    echo "The journal's hook will not be installed."
+fi
+

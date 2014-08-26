@@ -1,0 +1,21 @@
+#!/bin/sh -x
+
+# Configuration
+html_converter="<PATH-TO-GENERATE_HTML>"
+index_generator="<PATH-TO-GENERATE_INDEX>"
+stylesheet="<PATH-TO-STYLESHEET>"
+
+# Go to the root of the repo
+cd `git rev-parse --show-toplevel`
+
+# Find the files modified by the last commit
+modified=`git diff-tree --name-only --no-commit-id -r HEAD`
+
+# Iterate through the files and generate htmls for them
+for file in $modified
+do
+    $html_converter $file
+done
+
+# Generate the index in the current directory
+$index_generator $stylesheet .

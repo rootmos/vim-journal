@@ -41,7 +41,4 @@ endfunction
 function journal#SaveHook()
     " Call the save script to commit the journal
     call system( g:journal_install_dir . "/save " . expand("%:p"))
-
-    " Convert the journal to html
-    call system( g:journal_install_dir . "/generate_html " . expand("%:p"))
 endfunction

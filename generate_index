@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Check syntax
+if [ $# -ne 2 ];
+then
+    echo "Must specify stylesheet and which diretory to list!"
+    exit 2
+fi
+
+# Configuration
+output="index.xml"
+stylesheet="$1"
+output_html="index.html"
+
+# Go to the correct folder
+cd $2
+
+# Construct list of journal files
+path=`readlink -m $2`
+files=`find $2 -name "*.html" -and -not -name "index.html" -exec readlink -m '{}' \;`
+
+
+# Make an xml document out of the $files list
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" > $output
+
+echo "<journals>" >> $output
+for file in $files
+do
+    name=`basename $file .html`
+    modified=`stat -c "%y" $file`
+    head=`head -n 1 $file`
+    echo "<journal name=\"$name\" modified=\"$modified\" path=\"$file\"><![CDATA[$head]]></journal>" >> $output
+done
+echo "</journals>" >> $output
+
+
+# Convert the xml into a html using the stylesheet
+xsltproc $stylesheet $output > $output_html
+
